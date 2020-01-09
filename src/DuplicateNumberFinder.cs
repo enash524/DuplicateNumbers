@@ -12,31 +12,19 @@ namespace DuplicateNumbers
         /// <inheritdoc />
         public Dictionary<int, int> FindDuplicateNumbers(int[] numbers)
         {
-            var dic = new Dictionary<int, int>();
+            Dictionary<int, int> dic = new Dictionary<int, int>();
 
             if (numbers != null && numbers.Length > 0)
             {
-                foreach (var i in numbers)
-                {
-                    if (dic.ContainsKey(i))
+                dic = numbers
+                    .GroupBy(n => n)
+                    .Select(g => new
                     {
-                        dic[i] += 1;
-                    }
-                    else
-                    {
-                        dic.Add(i, 0);
-                    }
-                }
-
-                var obj = dic.Where(v => v.Value == 0);
-
-                if (obj != null && obj.Any())
-                {
-                    foreach (var o in obj.Reverse())
-                    {
-                        dic.Remove(o.Key);
-                    }
-                }
+                        g.Key,
+                        Value = g.Count() - 1
+                    })
+                    .Where(g => g.Value > 0)
+                    .ToDictionary(d => d.Key, d => d.Value);
             }
 
             return dic;
